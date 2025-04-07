@@ -1,5 +1,5 @@
 const passportJWT = require("passport-jwt");
-const User = require("./models/user"); // adjust path if needed
+const User = require("./user"); 
 const JWTStrategy = passportJWT.Strategy;
 const ExtractJWT = passportJWT.ExtractJwt;
 
