@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 let mongoDBConnectionString = process.env.MONGO_URL;
 
@@ -42,22 +43,21 @@ module.exports.registerUser = function (userData) {
     }
 
     bcrypt.hash(userData.password, 10).then((hash) => {
-      userData.password = hash;
-
       let newUser = new User({
         userName: userData.userName,
-        password: userData.password,
+        password: hash,
         favourites: [],
         history: []
       });
 
       newUser.save()
-        .then(() => {
-          resolve(`User ${userData.userName} successfully registered`);
+        .then((user) => {
+          const payload = { _id: user._id, userName: user.userName };
+          const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1h" });
+          resolve({ message: `User ${user.userName} successfully registered`, token });
         })
         .catch((err) => {
           console.error("Error creating user:", err);
-
           if (err.code === 11000) {
             reject("User Name already taken");
           } else {
@@ -83,7 +83,9 @@ module.exports.checkUser = function (userData) {
 
         bcrypt.compare(userData.password, user.password).then((res) => {
           if (res === true) {
-            resolve(user);
+            const payload = { _id: user._id, userName: user.userName };
+            const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1h" });
+            resolve({ message: "Login successful", token });
           } else {
             reject("Incorrect password for user " + userData.userName);
           }
