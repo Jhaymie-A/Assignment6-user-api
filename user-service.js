@@ -94,7 +94,8 @@ module.exports.checkUser = function (userData) {
       })
       .catch((err) => {
         console.error("Login check failed:", err);
-        reject("Error verifying user: " + err.message);
+        const safeMessage = typeof err === "string" ? err : (err.message || JSON.stringify(err));
+        reject(safeMessage);
       });
   });
 };
