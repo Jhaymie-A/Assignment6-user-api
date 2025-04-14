@@ -112,6 +112,10 @@ module.exports.getFavourites = function (id) {
 
 module.exports.addFavourite = function (id, favId) {
   return new Promise((resolve, reject) => {
+    if (!favId) {
+      return reject("No favourite ID provided.");
+    }
+
     User.findById(id).exec().then((user) => {
       if (user.favourites.length < 50) {
         User.findByIdAndUpdate(
@@ -120,13 +124,14 @@ module.exports.addFavourite = function (id, favId) {
           { new: true }
         ).exec()
           .then((user) => resolve(user.favourites))
-          .catch(() => reject(`Unable to update favourites for user with id: ${id}`));
+          .catch((err) => reject(`Unable to update favourites for user with id: ${id}`));
       } else {
         reject(`Favourites limit reached (50) for user with id: ${id}`);
       }
-    });
+    }).catch(err => reject("User not found or DB error"));
   });
 };
+
 
 module.exports.removeFavourite = function (id, favId) {
   return new Promise((resolve, reject) => {

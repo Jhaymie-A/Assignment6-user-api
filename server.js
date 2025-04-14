@@ -75,16 +75,21 @@ app.get(
 );
 
 app.put(
-    "/api/user/favourites",
+    "/api/user/favourites/:id",
     passport.authenticate("jwt", { session: false }),
     (req, res) => {
-      const favId = req.body.id;
+      const favId = req.params.id;
+      if (!favId) {
+        return res.status(400).json({ error: "No favourite ID provided" });
+      }
+  
       userService
         .addFavourite(req.user._id, favId)
         .then((data) => res.json(data))
         .catch((msg) => res.status(422).json({ error: msg }));
     }
   );
+  
   
   app.delete(
     "/api/user/favourites/:id",
