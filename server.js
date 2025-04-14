@@ -14,7 +14,7 @@ const JWTStrategy = passportJWT.Strategy;
 const ExtractJWT = passportJWT.ExtractJwt;
 const HTTP_PORT = process.env.PORT || 8080;
 
-// Configure passport to use JWT strategy (from course)
+// passport to use JWT strategy 
 passport.use(
   new JWTStrategy(
     {
@@ -62,7 +62,7 @@ app.post("/api/user/login", (req, res) => {
     .catch((msg) => res.status(422).json({ message: msg }));
 });
 
-// Protected Routes (matching course structure)
+// Protected Routes 
 app.get(
   "/api/user/favourites",
   passport.authenticate("jwt", { session: false }),
