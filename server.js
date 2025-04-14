@@ -18,7 +18,7 @@ const HTTP_PORT = process.env.PORT || 8080;
 passport.use(
   new JWTStrategy(
     {
-      jwtFromRequest: ExtractJWT.fromAuthHeaderWithScheme("jwt"),
+      jwtFromRequest: ExtractJWT.fromAuthHeaderWithScheme("JWT"),
       secretOrKey: process.env.JWT_SECRET,
     },
     (jwt_payload, done) => {
