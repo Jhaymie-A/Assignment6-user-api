@@ -74,28 +74,29 @@ app.get(
   }
 );
 
-app.put("/api/user/history",
+app.put(
+    "/api/user/favourites",
     passport.authenticate("jwt", { session: false }),
     (req, res) => {
-      const historyId = req.body.id; 
+      const favId = req.body.id;
       userService
-        .addHistory(req.user._id, historyId)
+        .addFavourite(req.user._id, favId)
         .then((data) => res.json(data))
         .catch((msg) => res.status(422).json({ error: msg }));
     }
   );
   
-
-app.delete(
-  "/api/user/favourites/:id",
-  passport.authenticate("jwt", { session: false }),
-  (req, res) => {
-    userService
-      .removeFavourite(req.user._id, req.params.id)
-      .then((data) => res.json(data))
-      .catch((msg) => res.status(422).json({ error: msg }));
-  }
-);
+  app.delete(
+    "/api/user/favourites/:id",
+    passport.authenticate("jwt", { session: false }),
+    (req, res) => {
+      userService
+        .removeFavourite(req.user._id, req.params.id)
+        .then((data) => res.json(data))
+        .catch((msg) => res.status(422).json({ error: msg }));
+    }
+  );
+  
 
 app.get(
   "/api/user/history",
@@ -108,28 +109,30 @@ app.get(
   }
 );
 
-app.put(
-  "/api/user/history/:id",
-  passport.authenticate("jwt", { session: false }),
-  (req, res) => {
-    userService
-      .addHistory(req.user._id, req.params.id)
-      .then((data) => res.json(data))
-      .catch((msg) => res.status(422).json({ error: msg }));
-  }
-);
+app.put("/api/user/history",
+    passport.authenticate("jwt", { session: false }),
+    (req, res) => {
+      const historyId = req.body.id; 
+      userService
+        .addHistory(req.user._id, historyId)
+        .then((data) => res.json(data))
+        .catch((msg) => res.status(422).json({ error: msg }));
+    }
+  );
+  
 
-app.delete(
-  "/api/user/history/:id",
-  passport.authenticate("jwt", { session: false }),
-  (req, res) => {
-    userService
-      .removeHistory(req.user._id, req.params.id)
-      .then((data) => res.json(data))
-      .catch((msg) => res.status(422).json({ error: msg }));
-  }
-);
-
+  app.delete(
+    "/api/user/history",
+    passport.authenticate("jwt", { session: false }),
+    (req, res) => {
+      const historyId = req.body.id;
+      userService
+        .removeHistory(req.user._id, historyId)
+        .then((data) => res.json(data))
+        .catch((msg) => res.status(422).json({ error: msg }));
+    }
+  );
+  
 // Start the server
 userService
   .connect()
