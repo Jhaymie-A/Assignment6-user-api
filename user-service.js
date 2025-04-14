@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken'); // ✅ added for JWT
 
 let mongoDBConnectionString = process.env.MONGO_URL;
 
@@ -43,9 +43,11 @@ module.exports.registerUser = function (userData) {
     }
 
     bcrypt.hash(userData.password, 10).then((hash) => {
+      userData.password = hash;
+
       let newUser = new User({
         userName: userData.userName,
-        password: hash,
+        password: userData.password,
         favourites: [],
         history: []
       });
@@ -58,6 +60,7 @@ module.exports.registerUser = function (userData) {
         })
         .catch((err) => {
           console.error("Error creating user:", err);
+
           if (err.code === 11000) {
             reject("User Name already taken");
           } else {
@@ -94,8 +97,7 @@ module.exports.checkUser = function (userData) {
       })
       .catch((err) => {
         console.error("Login check failed:", err);
-        const safeMessage = typeof err === "string" ? err : (err.message || JSON.stringify(err));
-        reject(safeMessage);
+        reject("Error verifying user: " + err.message);
       });
   });
 };
