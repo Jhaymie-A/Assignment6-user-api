@@ -74,16 +74,17 @@ app.get(
   }
 );
 
-app.put(
-  "/api/user/favourites/:id",
-  passport.authenticate("jwt", { session: false }),
-  (req, res) => {
-    userService
-      .addFavourite(req.user._id, req.params.id)
-      .then((data) => res.json(data))
-      .catch((msg) => res.status(422).json({ error: msg }));
-  }
-);
+app.put("/api/user/history",
+    passport.authenticate("jwt", { session: false }),
+    (req, res) => {
+      const historyId = req.body.id; 
+      userService
+        .addHistory(req.user._id, historyId)
+        .then((data) => res.json(data))
+        .catch((msg) => res.status(422).json({ error: msg }));
+    }
+  );
+  
 
 app.delete(
   "/api/user/favourites/:id",

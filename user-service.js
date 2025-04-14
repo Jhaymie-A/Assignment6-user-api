@@ -148,23 +148,20 @@ module.exports.getHistory = function (id) {
   });
 };
 
-module.exports.addHistory = function (id, historyId) {
-  return new Promise((resolve, reject) => {
-    User.findById(id).exec().then((user) => {
-      if (user.history.length < 50) {
-        User.findByIdAndUpdate(
-          id,
-          { $addToSet: { history: historyId } },
-          { new: true }
-        ).exec()
-          .then((user) => resolve(user.history))
-          .catch(() => reject(`Unable to update history for user with id: ${id}`));
-      } else {
-        reject(`History limit reached (50) for user with id: ${id}`);
-      }
-    });
+export async function addToHistory(queryString) {
+  const res = await fetch(`${API}/history`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `jwt ${getToken()}`
+    },
+    body: JSON.stringify({ id: queryString })  
   });
-};
+
+  if (res.status === 200) return await res.json();
+  return [];
+}
+
 
 module.exports.removeHistory = function (id, historyId) {
   return new Promise((resolve, reject) => {
