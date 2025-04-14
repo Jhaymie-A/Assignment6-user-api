@@ -75,16 +75,16 @@ app.get(
 );
 
 app.put(
-    "/api/user/favourites/:id",
+    "/api/user/favourites",
     passport.authenticate("jwt", { session: false }),
     (req, res) => {
-      const favId = req.params.id;
-      if (!favId) {
-        return res.status(400).json({ error: "No favourite ID provided" });
+      const id = req.body.id;
+      if (!id) {
+        return res.status(400).json({ error: "Missing artwork ID in request body" });
       }
   
       userService
-        .addFavourite(req.user._id, favId)
+        .addFavourite(req.user._id, id)
         .then((data) => res.json(data))
         .catch((msg) => res.status(422).json({ error: msg }));
     }
